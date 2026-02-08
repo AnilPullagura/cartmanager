@@ -75,7 +75,7 @@ export default function App() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ ItemID: id }),
     });
@@ -85,21 +85,21 @@ export default function App() {
   const checkout = async () => {
     await fetch(`${API}orders`, {
       method: "POST",
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     });
     alert("Order successful");
   };
 
   const showCart = async () => {
     const res = await fetch(`${API}carts`, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     });
     alert(JSON.stringify(await res.json(), null, 2));
   };
 
   const showOrders = async () => {
     const res = await fetch(`${API}orders`, {
-      headers: { Authorization: token },
+      headers: { Authorization: `Bearer ${token}` },
     });
     alert(JSON.stringify(await res.json(), null, 2));
   };
