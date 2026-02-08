@@ -5,26 +5,62 @@ const API = "https://cartmanager.onrender.com/";
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [items, setItems] = useState([]);
+  const [isRegister, setIsRegister] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (token) fetchItems();
   }, [token]);
 
-  const login = async () => {
-    const res = await fetch(`${API}/users/login`, {
+  const register = async () => {
+    if (!username || !password) {
+      setError("Username and password are required");
+      return;
+    }
+
+    const res = await fetch(`${API}users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: "anil", password: "123" }),
+      body: JSON.stringify({ username, password }),
     });
 
     if (res.status !== 200) {
-      alert("Invalid username/password");
+      setError("Registration failed");
+      return;
+    }
+
+    setError("");
+    alert("Registration successful! Now login.");
+    setIsRegister(false);
+    setUsername("");
+    setPassword("");
+  };
+
+  const login = async () => {
+    if (!username || !password) {
+      setError("Username and password are required");
+      return;
+    }
+
+    const res = await fetch(`${API}users/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (res.status !== 200) {
+      setError("Invalid username/password");
       return;
     }
 
     const data = await res.json();
     localStorage.setItem("token", data.token);
     setToken(data.token);
+    setError("");
+    setUsername("");
+    setPassword("");
   };
 
   const fetchItems = async () => {
@@ -71,12 +107,46 @@ export default function App() {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-10 rounded shadow w-80 text-center">
-          <h1 className="text-2xl font-bold mb-6">Shop Login</h1>
+          <h1 className="text-2xl font-bold mb-6">
+            {isRegister ? "Register" : "Shop Login"}
+          </h1>
+
+          {error && <p className="text-red-600 mb-4 text-sm">{error}</p>}
+
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="border border-gray-300 rounded w-full px-3 py-2 mb-4"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-gray-300 rounded w-full px-3 py-2 mb-6"
+          />
+
           <button
-            onClick={login}
-            className="bg-blue-600 text-white px-4 py-2 rounded w-full"
+            onClick={isRegister ? register : login}
+            className="bg-blue-600 text-white px-4 py-2 rounded w-full mb-2"
           >
-            Login
+            {isRegister ? "Register" : "Login"}
+          </button>
+
+          <button
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setError("");
+              setUsername("");
+              setPassword("");
+            }}
+            className="text-blue-600 text-sm w-full"
+          >
+            {isRegister
+              ? "Already have an account? Login"
+              : "New user? Register"}
           </button>
         </div>
       </div>
@@ -85,6 +155,19 @@ export default function App() {
 
   return (
     <div className="p-10 bg-gray-100 min-h-screen">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Shop</h1>
+        <button
+          onClick={() => {
+            localStorage.removeItem("token");
+            setToken("");
+          }}
+          className="bg-red-600 text-white px-4 py-2 rounded"
+        >
+          Logout
+        </button>
+      </div>
+
       <div className="flex gap-4 mb-8">
         <button
           onClick={checkout}
