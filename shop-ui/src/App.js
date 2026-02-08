@@ -13,7 +13,7 @@ export default function App() {
   const login = async () => {
     const res = await fetch(`${API}/users/login`, {
       method: "POST",
-
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: "anil", password: "123" }),
     });
 
