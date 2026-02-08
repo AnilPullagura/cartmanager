@@ -64,13 +64,14 @@ export default function App() {
   };
 
   const fetchItems = async () => {
-    const res = await fetch(`${API}/items`);
+    const res = await fetch(`${API}items`);
     const data = await res.json();
+    console.log(data);
     setItems(data);
   };
 
   const addToCart = async (id) => {
-    await fetch(`${API}/carts`, {
+    await fetch(`${API}carts`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +83,7 @@ export default function App() {
   };
 
   const checkout = async () => {
-    await fetch(`${API}/orders`, {
+    await fetch(`${API}orders`, {
       method: "POST",
       headers: { Authorization: token },
     });
@@ -90,14 +91,14 @@ export default function App() {
   };
 
   const showCart = async () => {
-    const res = await fetch(`${API}/carts`, {
+    const res = await fetch(`${API}carts`, {
       headers: { Authorization: token },
     });
     alert(JSON.stringify(await res.json(), null, 2));
   };
 
   const showOrders = async () => {
-    const res = await fetch(`${API}/orders`, {
+    const res = await fetch(`${API}orders`, {
       headers: { Authorization: token },
     });
     alert(JSON.stringify(await res.json(), null, 2));
