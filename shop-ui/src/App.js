@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const API = "http://localhost:8080";
+const API = "https://cartmanager.onrender.com/";
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem("token") || "");
