@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: shopping-cart
+    env: go
+    region: oregon
+    plan: free
+    buildCommand: go build -o shopping-cart .
+    startCommand: ./shopping-cart
+    envVars:
+      - key: FRONTEND_URL
+        value: https://cartmanager.vercel.app

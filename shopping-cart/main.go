@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"shopping-cart/handlers"
 	"shopping-cart/middleware"
 	"shopping-cart/models"
@@ -16,7 +17,8 @@ import (
 
 
 func main() {
-	db, err := gorm.Open(sqlite.Open("shop.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("/tmp/shop.db"), &gorm.Config{})
+
 if err != nil {
 	panic(err)
 }
@@ -28,7 +30,7 @@ if err != nil {
 
     r := gin.Default()
     r.Use(cors.New(cors.Config{
-    AllowOrigins:     []string{"http://localhost:3000"},
+    AllowOrigins:     []string{"https://cartmanager.vercel.app","http://localhost:3000"},
     AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
     AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
     ExposeHeaders:    []string{"Content-Length"},
@@ -53,6 +55,9 @@ if err != nil {
         auth.POST("/orders", handlers.CreateOrder(db))
         auth.GET("/orders", handlers.ListOrders(db))
     }
-
-    r.Run(":8080")
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+    r.Run(":" + port)
 }
